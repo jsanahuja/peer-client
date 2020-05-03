@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>WebRTC Sender</title>
+    <style>
+        video {
+            width: 200px;
+            height: 200px;
+            border: 1px #000 solid;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="videos">
+        <video autoplay="true" muted="true" id="local"></video>
+    </div>
+    
+    <div id="outOptions">
+        <p>
+            <button id="init">Init Cam and microphone</button>
+            <button disabled="disabled" id="joinRoom">Join Room</button>
+        </p>
+        <p>
+            <button disabled="disabled" id="toggleCam"></button>
+            <button disabled="disabled" id="toggleMicrophone"></button>
+            <button disabled="disabled" id="toggleAudio"></button>
+        </p>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script src="dist/client.min.js"></script>
+    
+    <script>
+        const peer = new PeerClient({
+            server: "https://webrtc.sowecms.com:9000",
+            streamOptions: {
+                video: true, microphone: true, audio: true
+            },
+            streamConstraints: {
+                audio: true, video: true
+            },
+            iceServers: [
+                { urls: 'stun:stun2.l.google.com:19302' },
+                { urls: 'stun:stun3.l.google.com:19302' },
+                { urls: 'stun:stun4.l.google.com:19302' },
+                {
+                    urls: 'turn:80.211.46.67:3478',
+                    username: 'sowecms',
+                    credential: 'GDOWcZL?5R4FiJ'
+                }
+            ],
+            iceCandidatePoolSize: 40,
+            onLocalStream: function(stream){
+                document.querySelector('video#local').srcObject = stream;
+                document.querySelector('#joinRoom').disabled = false;
+                document.querySelector('#toggleCam').disabled = false;
+                document.querySelector('#toggleMicrophone').disabled = false;
+            },
+            onRemoteStreamStart: function(callId, stream){
+                var video = document.createElement("video");
+                video.autoplay = "true";
+                video.srcObject = stream;
+                video.id = "remote" + callId;
+                document.querySelector('#videos').appendChild(video);
+            },
+            onRemoteStreamClose: function(callId){
+                var id = "remote" + callId;
+                var video = document.querySelector("#" + id);
+                document.querySelector('#videos').removeChild(video);
+            },
+            onUpdateStreamOptions: function(streamOptions){
+                if(streamOptions.video){
+                    document.querySelector("#toggleCam").innerText = "Disable Cam";
+                }else{
+                    document.querySelector("#toggleCam").innerText = "Enable Cam";
+                }
+
+                if(streamOptions.microphone){
+                    document.querySelector("#toggleMicrophone").innerText = "Disable Microphone";
+                }else{
+                    document.querySelector("#toggleMicrophone").innerText = "Enable Microphone";
+                }
+
+                if(streamOptions.sound){
+                    document.querySelector("#toggleAudio").innerText = "Disable Sound";
+                }else{
+                    document.querySelector("#toggleAudio").innerText = "Enable Sound";
+                }
+            },
+            onPermissionDenied: function(type, error){
+                switch(type){
+                    case "camera": // Recoverable, will run only microphone.
+                        alert("Camera permission was denied. Others won't be able to see you.");
+                        break;
+                    case "microphone": // Recoverable, will run only camera.
+                        alert("Microphone permission was denied. Others won't be able to hear you.");
+                        break;
+                    case "both":  // Nothing to do here. The end
+                        alert("Microphone and Camera permissions were denied. We can't get you in the room.");
+                        break;
+                }
+            },
+            onUserEvent: function(event){
+                switch(event.type){
+                    case "created":
+                        var url = "https://webrtc.sowecms.com/client/autojoin.html#" + event.room.id;
+                        document.querySelector("#roomid").innerHTML = "<a href='" + url +"'>" + url + "</a>";
+                        break;
+                    case "joined":
+                        break;
+                    case "left":
+                        break;
+                    case "kicked":
+                        break;
+                    case "banned":
+                        break;
+                    case "unbanned":
+                        break;
+                }
+            },
+            onRoomEvent: function(event){
+                switch(event.type){
+                    case "resource":
+                        break;
+                    case "message":
+                        break;
+                    case "joined":
+                        break;
+                    case "left":
+                        break;
+                    case "kicked":
+                        break;
+                    case "banned":
+                        break;
+                    case "unbanned":
+                        break;
+                }
+            }
+        });
+
+        peer.initSocket();
+
+        document.querySelector('#init').onclick = function(){
+            peer.initUserMedia();
+        };
+
+        document.querySelector('#joinRoom').onclick = function(){
+            var data = window.location.hash.replace("#", "").split(":");
+            switch(data.length){
+                case 1:
+                    peer.joinRoom(data[0]);
+                    break;
+                case 2:
+                    peer.joinRoom(data[0], data[1]);
+                    break;
+                default:
+                    alert("Invalid autojoin link");
+            }
+        }
+
+        document.querySelector('#toggleCam').onclick = function(){
+            peer.toggleCam();
+        }
+        document.querySelector('#toggleMicrophone').onclick = function(){
+            peer.toggleMicrophone();
+        }
+    </script>
+</body>
+
+</html>

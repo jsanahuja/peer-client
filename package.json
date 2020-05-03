@@ -1,0 +1,37 @@
+{
+  "name": "peer-client",
+  "description": "WebRTC client for php-peer-server",
+  "keywords": [
+    "WebRTC",
+    "peer",
+    "PHP",
+    "client"
+  ],
+  "homepage": "https://github.com/jsanahuja/peer-client#readme",
+  "version": "0.0.1",
+  "main": "dist/client.min.js",
+  "author": {
+    "name": "Javier Sanahuja",
+    "email": "bannss1@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsanahuja/peer-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jsanahuja/peer-client/issues"
+  },
+  "scripts": {
+    "build": "grunt build"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "babel-preset-minify": "^0.5.1",
+    "grunt": "^1.0.4",
+    "grunt-babel": "^8.0.0",
+    "grunt-babel-multi-files": "^0.2.0"
+  },
+  "module": "dist/client.min.js"
+}
