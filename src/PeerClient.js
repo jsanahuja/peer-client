@@ -146,7 +146,7 @@
                     video: video,
                     audio: audio
                 });
-            }catch(error){
+            }catch(e){
                 // Permission denied.
                 // Trying to get only audio.
                 try{
@@ -156,7 +156,7 @@
                     });
                     // If we are here the problem was video permissions.
                     error = "camera";
-                }catch(error){
+                }catch(e){
                     // Permission denied.
                     // Trying to get only video
                     try{
@@ -166,7 +166,8 @@
                         });
                         // If we are here the problem was audio permissions.
                         error = "microphone";
-                    }catch(error){
+                    }catch(e){
+                        console.error(e);
                         // Permission denied. If we are here both failed.
                         error = "both";
                     }

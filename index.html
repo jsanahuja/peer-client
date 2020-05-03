@@ -36,12 +36,7 @@
             <button id="joinRoom">Join Room</button>
         </p>
     </div>
-    
-    <div id="innerOptions">
-        <p>
-             
-        </p>
-    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
     <script src="dist/client.min.js"></script>
     <script>
@@ -156,6 +151,7 @@
         document.querySelector('#init').onclick = function(){
             peer.initUserMedia();
         };
+
         document.querySelector('#createRoom').onclick = function(){
             peer.createRoom(
                 document.querySelector('#createRoomName').value,
