@@ -3,18 +3,67 @@
 
 <head>
     <title>WebRTC Sender</title>
-    <style>
-        video {
-            width: 200px;
-            height: 200px;
-            border: 1px #000 solid;
-        }
+    <style>        #videos {
+        width: 100%;
+        text-align: center;
+    }
+
+    #chat {
+        width: 100%;
+        text-align: center;
+    }
+
+    #chat-messages {
+        text-align:left;
+        margin: 0 auto;
+        width: 350px;
+        height: 350px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        background: #efefef;
+        padding:0.5em;
+        box-sizing:border-box;
+    }
+    
+    #chat-messages p{word-break: break-all;}
+
+    #chat-form {
+        margin: 0 auto;
+        width: 350px;
+        height: 50px;
+    }
+
+    #chat-input {
+        float: left;
+        text-align:left;
+        width: 250px;
+        height: 50px;
+    }
+
+    #chat-send {
+        float: right;
+        width: 90px;
+        height: 55px
+    }
+
+    video {
+        width: 350px;
+        height: 350px;
+        /* border: 1px #000 solid; */
+    }
     </style>
 </head>
 
 <body>
     <div id="videos">
         <video autoplay="true" muted="true" id="local"></video>
+    </div>
+    <div id="chat">
+        <div id="chat-messages"></div>
+        <div id="chat-form">
+            <textarea id="chat-input"></textarea>
+            <button id="chat-send">Send</button>
+        </div>
     </div>
     
     <div id="outOptions">
@@ -132,6 +181,13 @@
                     case "resource":
                         break;
                     case "message":
+                        var p = document.createElement("p");
+                        if(peer.socket.id == event.client.id)
+                            p.innerText = "You: " + event.data;
+                        else
+                            p.innerText = "Other: " + event.data;
+                        document.querySelector("#chat-messages").appendChild(p);
+                            
                         break;
                     case "joined":
                         break;
@@ -169,6 +225,19 @@
         }
         document.querySelector('#toggleMicrophone').onclick = function(){
             peer.toggleMicrophone();
+        }
+
+        document.querySelector("#chat-input").addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                peer.sendMessage(document.querySelector("#chat-input").value);
+                document.querySelector("#chat-input").value = "";
+            }
+        });
+
+        document.querySelector("#chat-send").onclick = function () {
+            peer.sendMessage(document.querySelector("#chat-input").value);
+            document.querySelector("#chat-input").value = "";
         }
     </script>
 </body>

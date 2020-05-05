@@ -235,6 +235,10 @@
         this.joinRoom = function(roomId, password){
             this.socket.emit("join", roomId, password);
         }
+        
+        this.sendMessage = function(message){
+            this.socket.emit("message", message);
+        }
     };
 
 }));
