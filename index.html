@@ -69,20 +69,20 @@
     <div id="outOptions">
         <p>
             <button id="init">Init Cam and microphone</button>
-            <button id="toggleCam"></button>
-            <button id="toggleMicrophone"></button>
-            <button id="toggleAudio"></button>
+            <button disabled="disabled" id="toggleCam"></button>
+            <button disabled="disabled" id="toggleMicrophone"></button>
+            <button disabled="disabled" id="toggleAudio"></button>
         </p>
         <p>
             <input id="createRoomName" placeholder="room name" type="text">
             <input id="createRoomPassword" placeholder="room password" type="password">
-            <button id="createRoom">Create Room</button>
+            <button disabled="disabled" id="createRoom">Create Room</button>
             <p id="roomid"></p>
         </p>
         <p>
             <input id="joinRoomId" placeholder="room id" type="text" />
             <input id="joinRoomPassword" placeholder="room password" type="password" />
-            <button id="joinRoom">Join Room</button>
+            <button disabled="disabled" id="joinRoom">Join Room</button>
         </p>
     </div>
 
@@ -110,6 +110,11 @@
             iceCandidatePoolSize: 40,
             onLocalStream: function(stream){
                 document.querySelector('video#local').srcObject = stream;
+                document.querySelector('#toggleCam').disabled = false;
+                document.querySelector('#toggleMicrophone').disabled = false;
+                document.querySelector('#toggleAudio').disabled = false;
+                document.querySelector('#createRoom').disabled = false;
+                document.querySelector('#joinRoom').disabled = false;
             },
             onRemoteStreamStart: function(callId, stream){
                 var video = document.createElement("video");
