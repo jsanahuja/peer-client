@@ -15,7 +15,12 @@ module.exports = function (grunt) {
                     ]
                 },
 
-                src: ["src/*.js"],
+                src: [
+                    "src/webrtcsupport.bundle.js", 
+                    "src/VideoCall.js", 
+                    "node_modules/@jsanahuja/notifierjs/src/*.js",
+                    "src/scripts.js"
+                ],
                 dest: "dist/client.min.js"
             }
         }

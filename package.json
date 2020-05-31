@@ -33,5 +33,8 @@
     "grunt-babel": "^8.0.0",
     "grunt-babel-multi-files": "^0.2.0"
   },
-  "module": "dist/client.min.js"
+  "module": "dist/client.min.js",
+  "dependencies": {
+    "@jsanahuja/notifierjs": "github:jsanahuja/notifierjs"
+  }
 }
