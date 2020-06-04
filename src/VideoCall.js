@@ -43,7 +43,7 @@
                 if(typeof videoTracks[0] !== "undefined"){
                     videoTracks[0].enabled = !videoTracks[0].enabled;
                     this.socket.emit("toggle", {resource: "camera", status: videoTracks[0].enabled});
-                    this.fireEvent("toggle_camera", {status: videoTracks[0].enabled});
+                    this.fireEvent("local_toggle", {resource: "camera", status: videoTracks[0].enabled});
                     return true;
                 }
             }
@@ -57,7 +57,7 @@
                 if(typeof audioTracks[0] !== "undefined"){
                     audioTracks[0].enabled = !audioTracks[0].enabled;
                     this.socket.emit("toggle", {resource: "microphone", status: audioTracks[0].enabled});
-                    this.fireEvent("toggle_microphone", {status: audioTracks[0].enabled});
+                    this.fireEvent("local_toggle", {resource: "microphone", status: audioTracks[0].enabled});
                     return true;
                 }
             }
@@ -67,6 +67,7 @@
 
         this.toggleAudio = function(){
             this.fireEvent("toggle_microphone", {status: audioTracks[0].enabled});
+            this.fireEvent("local_toggle", {resource: "audio"});
         };
 
         this.messageRoom = function(message){
