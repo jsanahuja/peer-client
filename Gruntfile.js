@@ -17,7 +17,7 @@ module.exports = function (grunt) {
 
                 src: [
                     "src/webrtcsupport.bundle.js", 
-                    "src/VideoCall.js", 
+                    "src/VideoRoom.js", 
                     "node_modules/@jsanahuja/notifierjs/src/*.js",
                     "src/scripts.js"
                 ],

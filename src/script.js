@@ -1,4 +1,4 @@
-const client = new VideoCall({
+const client = new VideoRoom({
     server: "https://webrtc.sowecms.com:9000",
     iceServers: [
         { urls: 'stun:stun2.l.google.com:19302' },
