@@ -89,44 +89,161 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
     <script src="dist/client.min.js"></script>
     <script>
+        const peer = new PeerClient({
+            server: "https://webrtc.sowecms.com:9000",
+            streamOptions: {
+                video: true, microphone: true, audio: true
+            },
+            streamConstraints: {
+                audio: true, video: true
+            },
+            iceServers: [
+                { urls: 'stun:stun2.l.google.com:19302' },
+                { urls: 'stun:stun3.l.google.com:19302' },
+                { urls: 'stun:stun4.l.google.com:19302' },
+                {
+                    urls: 'turn:80.211.46.67:3478',
+                    username: 'sowecms',
+                    credential: 'GDOWcZL?5R4FiJ'
+                }
+            ],
+            iceCandidatePoolSize: 40,
+            onLocalStream: function(stream){
+                document.querySelector('video#local').srcObject = stream;
+                document.querySelector('#toggleCam').disabled = false;
+                document.querySelector('#toggleMicrophone').disabled = false;
+                document.querySelector('#toggleAudio').disabled = false;
+                document.querySelector('#createRoom').disabled = false;
+                document.querySelector('#joinRoom').disabled = false;
+            },
+            onRemoteStreamStart: function(callId, stream){
+                var video = document.createElement("video");
+                video.autoplay = "true";
+                video.srcObject = stream;
+                video.id = "remote" + callId;
+                document.querySelector('#videos').appendChild(video);
+            },
+            onRemoteStreamClose: function(callId){
+                var id = "remote" + callId;
+                var video = document.querySelector("#" + id);
+                document.querySelector('#videos').removeChild(video);
+            },
+            onUpdateStreamOptions: function(streamOptions){
+                if(streamOptions.video){
+                    document.querySelector("#toggleCam").innerText = "Disable Cam";
+                }else{
+                    document.querySelector("#toggleCam").innerText = "Enable Cam";
+                }
 
+                if(streamOptions.microphone){
+                    document.querySelector("#toggleMicrophone").innerText = "Disable Microphone";
+                }else{
+                    document.querySelector("#toggleMicrophone").innerText = "Enable Microphone";
+                }
 
-        // peer.initSocket();
-        // document.querySelector('#init').onclick = function(){
-        //     peer.initUserMedia();
-        // };
+                if(streamOptions.audio){
+                    document.querySelector("#toggleAudio").innerText = "Disable Sound";
+                }else{
+                    document.querySelector("#toggleAudio").innerText = "Enable Sound";
+                }
+            },
+            onPermissionDenied: function(type, error){
+                switch(type){
+                    case "camera": // Recoverable, will run only microphone.
+                        alert("Camera permission was denied. Others won't be able to see you.");
+                        break;
+                    case "microphone": // Recoverable, will run only camera.
+                        alert("Microphone permission was denied. Others won't be able to hear you.");
+                        break;
+                    case "both":  // Nothing to do here. The end
+                        alert("Microphone and Camera permissions were denied. We can't get you in the room.");
+                        break;
+                }
+            },
+            onUnsupportedWebRTC: function(){
+                alert("Your browser does not support WebRTC");
+            },
+            onUserEvent: function(event){
+                switch(event.type){
+                    case "created":
+                        var url = "https://webrtc.sowecms.com/client/autojoin.html#" + event.room.id + ":" + document.querySelector('#createRoomPassword').value;
+                        document.querySelector("#roomid").innerHTML = "<a href='" + url +"'>" + url + "</a>";
+                        break;
+                    case "joined":
+                        break;
+                    case "left":
+                        break;
+                    case "kicked":
+                        break;
+                    case "banned":
+                        break;
+                    case "unbanned":
+                        break;
+                }
+            },
+            onRoomEvent: function(event){
+                switch(event.type){
+                    case "resource":
+                        break;
+                    case "message":
+                        var p = document.createElement("p");
+                        if(peer.socket.id == event.client.id)
+                            p.innerText = "You: " + event.data;
+                        else
+                            p.innerText = "Other: " + event.data;
+                        document.querySelector("#chat-messages").appendChild(p);
+                            
+                        break;
+                    case "joined":
+                        break;
+                    case "left":
+                        break;
+                    case "kicked":
+                        break;
+                    case "banned":
+                        break;
+                    case "unbanned":
+                        break;
+                }
+            }
+        });
 
-        // document.querySelector('#createRoom').onclick = function(){
-        //     peer.createRoom(
-        //         document.querySelector('#createRoomName').value,
-        //         document.querySelector('#createRoomPassword').value
-        //     );
-        // }
-        // document.querySelector('#joinRoom').onclick = function(){
-        //     peer.joinRoom(
-        //         document.querySelector('#joinRoomId').value,
-        //         document.querySelector('#joinRoomPassword').value,
-        //     );
-        // }
-        // document.querySelector('#toggleCam').onclick = function(){
-        //     peer.toggleCam();
-        // }
-        // document.querySelector('#toggleMicrophone').onclick = function(){
-        //     peer.toggleMicrophone();
-        // }
+        peer.initSocket();
+        document.querySelector('#init').onclick = function(){
+            peer.initUserMedia();
+        };
 
-        // document.querySelector("#chat-input").addEventListener("keyup", function (event) {
-        //     if (event.keyCode === 13) {
-        //         event.preventDefault();
-        //         peer.sendMessage(document.querySelector("#chat-input").value);
-        //         document.querySelector("#chat-input").value = "";
-        //     }
-        // });
+        document.querySelector('#createRoom').onclick = function(){
+            peer.createRoom(
+                document.querySelector('#createRoomName').value,
+                document.querySelector('#createRoomPassword').value
+            );
+        }
+        document.querySelector('#joinRoom').onclick = function(){
+            peer.joinRoom(
+                document.querySelector('#joinRoomId').value,
+                document.querySelector('#joinRoomPassword').value,
+            );
+        }
+        document.querySelector('#toggleCam').onclick = function(){
+            peer.toggleCam();
+        }
+        document.querySelector('#toggleMicrophone').onclick = function(){
+            peer.toggleMicrophone();
+        }
 
-        // document.querySelector("#chat-send").onclick = function () {
-        //     peer.sendMessage(document.querySelector("#chat-input").value);
-        //     document.querySelector("#chat-input").value = "";
-        // }
+        document.querySelector("#chat-input").addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                peer.sendMessage(document.querySelector("#chat-input").value);
+                document.querySelector("#chat-input").value = "";
+            }
+        });
+
+        document.querySelector("#chat-send").onclick = function () {
+            peer.sendMessage(document.querySelector("#chat-input").value);
+            document.querySelector("#chat-input").value = "";
+        }
     </script>
 </body>
 
