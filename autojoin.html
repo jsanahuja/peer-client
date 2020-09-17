@@ -117,7 +117,7 @@
 
     <script>
         const peer = new PeerClient({
-            server: "https://webrtc.sowecms.com:9000",
+            server: location.protocol + "//" + location.hostname + ":9000",
             streamOptions: {
                 video: true, microphone: true, audio: true
             },
@@ -189,7 +189,7 @@
             onUserEvent: function (event) {
                 switch (event.type) {
                     case "created":
-                        var url = "https://webrtc.sowecms.com/client/autojoin.html#" + event.room.id;
+                        var url = location.protocol + "//" + location.hostname + "/autojoin.html#" + event.room.id;
                         document.querySelector("#roomid").innerHTML = "<a href='" + url + "'>" + url + "</a>";
                         break;
                     case "joined":
