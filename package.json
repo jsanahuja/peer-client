@@ -1,5 +1,5 @@
 {
-  "name": "peer-client",
+  "name": "@jsanahuja/peer-client",
   "description": "WebRTC client for php-peer-server",
   "keywords": [
     "WebRTC",
