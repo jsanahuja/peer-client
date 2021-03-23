@@ -5,11 +5,16 @@
     "WebRTC",
     "peer",
     "PHP",
-    "client"
+    "client",
+    "room"
   ],
+  "publishConfig": {
+      "registry": "https://npm.pkg.github.com/"
+  },
   "homepage": "https://github.com/jsanahuja/peer-client#readme",
-  "version": "0.0.1",
-  "main": "dist/client.min.js",
+  "version": "0.0.2",
+  "main": "dist/PeerClient.min.js",
+  "module": "src/index.js",
   "author": {
     "name": "Javier Sanahuja",
     "email": "bannss1@gmail.com"
@@ -22,16 +27,18 @@
     "url": "https://github.com/jsanahuja/peer-client/issues"
   },
   "scripts": {
-    "build": "grunt build"
+    "dev": "webpack --mode development --watch",
+    "build": "webpack --mode production"
   },
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@babel/preset-env": "^7.9.6",
-    "babel-preset-minify": "^0.5.1",
-    "grunt": "^1.0.4",
-    "grunt-babel": "^8.0.0",
-    "grunt-babel-multi-files": "^0.2.0"
+    "@babel/core": "^7.11.1",
+    "@babel/preset-env": "^7.11.0",
+    "babel-loader": "^8.1.0",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
   },
-  "module": "dist/client.min.js"
+  "dependencies": {
+    "webrtc-adapter": "^7.7.1"
+  }
 }
